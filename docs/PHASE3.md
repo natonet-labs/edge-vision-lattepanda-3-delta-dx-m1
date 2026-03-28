@@ -5,7 +5,25 @@ The core of this phase is the transition from a local hardware setup to a distri
 The Brain (LP3D) identifies a specific user through the camera feed using the AI accelerator. It sends a wireless command (the "Communication Protocol") over the local network to the Messenger (Pico 2 WH).  The Messenger receives this command and instantly renders the appropriate "Welcome Home" message on the Adafruit LED Matrix.
 >  *Detection > Network Trigger > Visual Output*
 
-### The Brain: Inference & Logic (LattePanda)
+### 1. Video Input Evolution
+
+This phase moves from a simple direct connection to a professional networked video feed.
+
+#### Stage 1: The Prototype (USB Webcam)
+
+  * **Hardware:** Logitech C920s (or equivalent UVC-compliant webcam).
+  * **Connection:** Direct USB-A to LattePanda 3 Delta.
+  * **Use Case:** Ideal for initial code development and DX-M1 inference testing.
+  * **Constraint:** Limited by USB cable length (~15ft); requires the "Brain" to be physically near the camera.
+
+#### Stage 2: The Permanent Install (PoE 4K Camera)
+
+  * **Hardware:** 4K PoE Security Camera + [Trendnet Gigabit PoE+ Injector](https://www.microcenter.com/product/603030/trendnet-gigabit-poe-injector).
+  * **Connection:** Camera → PoE Switch → LattePanda (via Ethernet).
+  * **Sub-stream (704x480):** Pulled by the LattePanda via RTSP (`subtype=1`) for low-latency AI processing.
+  * **Advantage:** Allows the LattePanda to stay in the office/server rack while the camera is mounted hundreds of feet away in the kitchen or driveway.
+
+### 2. The Brain: Inference & Logic (LattePanda)
 * **Role:** Runs the AI models (YOLOv8/v9) to recognize "Nathan" and sends a network command.
 * **Key Advantage:** The 25 TOPS from the DX-M1 handles the high-resolution camera feed without breaking a sweat, leaving the CPU free to manage the network bridge.
 * **Communication Protocol (MQTT):** Ensuring near-zero latency between face detection and the visual display.
@@ -22,12 +40,12 @@ The Brain (LP3D) identifies a specific user through the camera feed using the AI
     ```
   - **Pico Logic:** The Pico 2 WH subscribes to this topic. Upon receipt, it parses the JSON and triggers the corresponding animation on the Adafruit LED Matrix.
 
-### The Messenger (Pico 2 WH)
+### 3. The Messenger (Pico 2 WH)
 * **Role:** Stays in the kitchen, receives Wi-Fi signals and drives the LED Matrix.
 * **Key Advantage:** The Pico 2 WH features the new RP2350 chip with 520KB of RAM, which is more than enough to buffer complex scrolling text and high-speed animations for the LED matrix.
 **
 
-### The Visuals (Adafruit LED Matrix)
+### 4. The Visuals (Adafruit LED Matrix)
 * **Matrix:** The Adafruit 16x32 RGB Matrix provides high-impact visual feedback that is clearly visible from across the room.
 * **Signal Integrity:** The 74AHCT125 Level Shifter is essential for converting the Pico's 3.3V signals to the 5V signals required by the matrix, preventing flickering or "ghosting."
 * **Stable Power:** The 5V 4A Power Supply ensures that even if you turn all 512 LEDs to full brightness white, the system remains stable.
@@ -39,6 +57,6 @@ The Brain (LP3D) identifies a specific user through the camera feed using the AI
   - **Protection:** [1N5817 Schottky Diode](https://stompboxparts.com/semiconductors/1n5817-schottky-diode/) (Prevents back-powering USB during programming)
   - **Connector:** [DC Barrel Jack to 2-pin Terminal Block Adapter](https://www.pololu.com/product/2449)
 
-> *Pro-Tip for Assembly: When you wire the 74AHCT125, ensure you tie the OE (Output Enable) pins to Ground. This keeps the outputs active at all times, ensuring your matrix doesn't go dark if the Pico 2 WH momentarily shifts its pin states during a reboot.*
+  > *Pro-Tip for Assembly: When you wire the 74AHCT125, ensure you tie the OE (Output Enable) pins to Ground. This keeps the outputs active at all times, ensuring your matrix doesn't go dark if the Pico 2 WH momentarily shifts its pin states during a reboot.*
 
 ---
