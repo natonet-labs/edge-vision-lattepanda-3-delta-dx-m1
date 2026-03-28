@@ -9,19 +9,20 @@
 ## Table of Contents
 
 1. [Hardware Overview](#1-hardware-overview)
-2. [The PCIe Topology Problem](#2-the-pcie-topology-problem)
-3. [BIOS Configuration](#3-bios-configuration)
-4. [OS Installation](#4-os-installation)
-5. [Verifying PCIe Enumeration](#5-verifying-pcie-enumeration)
-6. [Driver Installation](#6-driver-installation)
-7. [DX-RT Runtime Installation](#7-dx-rt-runtime-installation)
-8. [DX-COM Compiler Installation](#8-dx-com-compiler-installation)
-9. [Permissions Setup](#9-permissions-setup)
-10. [Persistent Module Loading](#10-persistent-module-loading)
-11. [Verification](#11-verification)
-12. [System Summary](#12-system-summary)
-13. [Known Limitations](#13-known-limitations)
-14. [Troubleshooting Reference](#14-troubleshooting-reference)
+2. [External Drive Setup](#2-external-drive-setup)
+3. [The PCIe Topology Problem](#3-the-pcie-topology-problem)
+4. [BIOS Configuration](#4-bios-configuration)
+5. [OS Installation](#5-os-installation)
+6. [Verifying PCIe Enumeration](#6-verifying-pcie-enumeration)
+7. [Driver Installation](#7-driver-installation)
+8. [DX-RT Runtime Installation](#8-dx-rt-runtime-installation)
+9. [DX-COM Compiler Installation](#9-dx-com-compiler-installation)
+10. [Permissions Setup](#10-permissions-setup)
+11. [Persistent Module Loading](#11-persistent-module-loading)
+12. [Verification](#12-verification)
+13. [System Summary](#13-system-summary)
+14. [Known Limitations](#14-known-limitations)
+15. [Troubleshooting Reference](#15-troubleshooting-reference)
 
 ---
 
@@ -41,7 +42,26 @@
 
 ---
 
-## 2. The PCIe Topology Problem
+## 2. External Drive Setup
+
+To support the **DeepX DX-M1**, the internal SATA controller must be disabled. This project uses a **"Hybrid-External"** boot strategy to maintain high performance and offload thermal stress.
+
+### 2.1. Assembly
+* **AI Module:** Install the **DeepX DX-M1** into the **M.2 M-Key** slot.
+* **Storage Stack:** Connect the **Transcend 430s** (*or any M.2 2230/2242 drive*) via the **ElecGear** enclosure and **90° "Up" adapter** to the **10Gbps USB port**.
+> **Tip:** The 90° "Up" orientation prevents the enclosure from blocking adjacent USB ports and improves cooling.
+
+
+### 2.2. Required BIOS Settings
+Disabling SATA is **mandatory** to free up PCIe resources for the NPU:
+
+* **SATA Controller:** `Advanced` > `South Bridge` > `SATA Configuration` → **[Disabled]**.
+* **Boot Priority:** Set to **[USB Key: UEFI: ElecGear...]**.
+* **AC Power Loss:** Set to **[Always On]** for automatic 24/7 restarts.
+
+---
+
+## 3. The PCIe Topology Problem
 
 This is the most critical section. **Do not skip it.**
 
@@ -79,30 +99,30 @@ Disabling the SATA controller makes the **M.2 B-Key slot unusable** for SATA SSD
 
 ---
 
-## 3. BIOS Configuration
+## 4. BIOS Configuration
 
 Enter BIOS by pressing **DEL** repeatedly at POST.
 
 ### Required Settings
 
-#### 3.1 Disable SATA Controller
+#### 4.1 Disable SATA Controller
 ```
 Chipset → PCH-IO Configuration → SATA Configuration → SATA Controller → Disabled
 ```
 
-#### 3.2 Set PCIe Speed to Gen2
+#### 4.2 Set PCIe Speed to Gen2
 ```
 Chipset → PCH-IO Configuration → PCI Express Configuration → Root Port 1 → PCIe Speed → Gen2
 ```
 
 > **Critical:** Gen1 speed (2.5GT/s) is insufficient for the DX-M1 firmware initialization handshake. The DMA header buffer overflows and firmware times out. Gen2 (5GT/s) resolves this.
 
-#### 3.3 Save and Reboot
+#### 4.3 Save and Reboot
 Save changes and allow the system to boot fully into the OS before proceeding.
 
 ---
 
-## 4. OS Installation
+## 5. OS Installation
 
 **Recommended OS:** Ubuntu 24.04 LTS
 
@@ -112,7 +132,7 @@ Install Ubuntu 24.04 LTS to the onboard eMMC. Standard installation, no special 
 
 ---
 
-## 5. Verifying PCIe Enumeration
+## 6. Verifying PCIe Enumeration
 
 After BIOS configuration and OS boot, verify the DX-M1 is visible on the PCIe bus:
 
@@ -141,22 +161,22 @@ If the DX-M1 does not appear, recheck BIOS settings - specifically that SATA Con
 
 ---
 
-## 6. Driver Installation
+## 7. Driver Installation
 
-### 6.1 Install Prerequisites
+### 7.1 Install Prerequisites
 
 ```bash
 sudo apt update && sudo apt install git build-essential linux-headers-$(uname -r) -y
 ```
 
-### 6.2 Clone the Driver Repository
+### 7.2 Clone the Driver Repository
 
 ```bash
 git clone https://github.com/DEEPX-AI/dx_rt_npu_linux_driver.git
 cd dx_rt_npu_linux_driver/modules
 ```
 
-### 6.3 Build the Driver
+### 7.3 Build the Driver
 
 ```bash
 make DEVICE=m1 PCIE=deepx 2>&1 | tail -10
@@ -171,7 +191,7 @@ sudo cp ~/dx_rt_npu_linux_driver/modules/rt/dxrt_driver.ko /lib/modules/$(uname 
 sudo depmod -A
 ```
 
-### 6.4 Install udev Rules
+### 7.4 Install udev Rules
 
 ```bash
 sudo cp ~/dx_rt_npu_linux_driver/modules/dx_dma.conf /etc/modprobe.d/
@@ -180,14 +200,14 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
 
-### 6.5 Load the Driver
+### 7.5 Load the Driver
 
 ```bash
 sudo modprobe dx_dma
 sudo modprobe dxrt_driver
 ```
 
-### 6.6 Verify Driver Binding
+### 7.6 Verify Driver Binding
 
 ```bash
 lsmod | grep -i dx
@@ -203,17 +223,17 @@ Kernel driver in use: dx_dma_pcie
 
 ---
 
-## 7. DX-RT Runtime Installation
+## 8. DX-RT Runtime Installation
 
 DX-RT is a C++ build - not a Python package. Download `dx_rt_vX.X.X.tar.gz` from the DEEPX Developer Portal: https://developer.deepx.ai
 
-### 7.1 Install Build Dependencies
+### 8.1 Install Build Dependencies
 
 ```bash
 sudo apt install cmake ninja-build pkg-config libncurses-dev libncursesw5-dev -y
 ```
 
-### 7.2 Extract and Build
+### 8.2 Extract and Build
 
 ```bash
 tar -xzf ~/Downloads/dx_rt_v*.tar.gz -C ~/dx_rt_npu_linux_driver/modules/
@@ -223,7 +243,7 @@ sudo ./build.sh --use_ort_off --use_service_off --clean
 
 > **Note:** The `--use_ort_off` flag disables the ONNX Runtime dependency which is not required for basic device operation and inference.
 
-### 7.3 Install
+### 8.3 Install
 
 The build script installs binaries to `/usr/local/bin` automatically on successful build. Verify:
 
@@ -233,7 +253,7 @@ which dxrt-cli
 
 ---
 
-## 8. DX-COM Compiler Installation
+## 9. DX-COM Compiler Installation
 
 DX-COM is the model compiler for converting ONNX/PyTorch/TensorFlow models to DXNN format.
 
@@ -265,7 +285,7 @@ Target Hardware: M1
 
 ---
 
-## 9. Permissions Setup
+## 10. Permissions Setup
 
 Create a `deepx` group and add your user to it for non-root device access:
 
@@ -290,7 +310,7 @@ dxrt-cli --status
 
 ---
 
-## 10. Persistent Module Loading
+## 11. Persistent Module Loading
 
 Ensure drivers load automatically on every boot:
 
@@ -313,7 +333,7 @@ dxrt_driver
 
 ---
 
-## 11. Verification
+## 12. Verification
 
 Reboot the system and confirm everything comes up automatically:
 
@@ -359,7 +379,7 @@ NPU 2: voltage 750 mV, clock 1000 MHz, temperature 6X'C
 
 ---
 
-## 12. System Summary
+## 13. System Summary
 
 ```
 delta@lp3d
@@ -383,7 +403,7 @@ delta@lp3d
 
 ---
 
-## 13. Known Limitations
+## 14. Known Limitations
 
 | Limitation | Detail |
 |------------|--------|
@@ -395,7 +415,7 @@ delta@lp3d
 
 ---
 
-## 14. Troubleshooting Reference
+## 15. Troubleshooting Reference
 
 ### DX-M1 not appearing in `lspci`
 - Verify SATA Controller is **Disabled** in BIOS
