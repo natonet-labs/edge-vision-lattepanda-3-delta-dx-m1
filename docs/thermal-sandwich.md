@@ -1,49 +1,47 @@
 # The "Level-Fill" Thermal Sandwich Guide
 
-In a plastic enclosure like the **Titan Case**, the **DeepX DX-M1** can reach 60°C+ quickly without direct contact with the system's airflow. This guide explains how to create a "Thermal Sandwich" to bridge the NPU to the LattePanda’s active cooling system.
+In a small plastic case like the **Titan Case**, AI modules like the **DeepX DX-M1** can get very hot (60°C+) because they are tucked away from the main fans. This guide shows you how to build a "Thermal Sandwich" to move that heat into a heatsink and out of the case.
+
+## 1. The Strategy: "Flat is Better"
+Most AI chips aren't flat; they have a "peak" (the main chip) and "valleys" (the circuit board around it). 
+* **The Goal:** Fill the valleys so the entire surface is flat.
+* **The Result:** This gives your heatsink 100% contact area and prevents the thin AI board from bending or snapping under pressure.
+
+## 2. What You Need
+* **1mm Thermal Pad:** For filling the "valleys."
+* **0.5mm Thermal Pad:** For the final "cap" layer.
+* **Small Heatsink:** To pull heat away from the pads.
+* **Kapton Tape:** To cover tiny parts on the board for safety.
 
 ---
 
-## 1. The Theory
-The goal is to create a solid stack of thermally conductive material that fills the physical gap between the **DX-M1 chip** and the **underside of the LattePanda 3 Delta fan housing**.
+## 3. The 4-Step Build
 
-* **Bottom Layer:** DeepX DX-M1 NPU.
-* **Middle Layer:** 1.5mm or 2.0mm High-Performance Thermal Pad (12.8 W/mK).
-* **Top Layer:** The LattePanda's integrated metal heat shield/fan assembly.
+### Step 1: The Safety Layer (Kapton Tape)
+Cover the small gold components around the main chip with Kapton tape. This acts as a safety barrier so the thermal pads don't touch anything they shouldn't.
 
----
+### Step 2: Fill the "Valleys" (1mm Pads)
+Don't just put one thick pad over the whole thing. This traps air.
+* Cut the **1mm pad** into small pieces.
+* Place them into the "low spots" of the board around the main chip.
+* **Important:** Do NOT put these on top of the main chip yet. You want to bring the "valleys" up to the same height as the "peak".
 
-## 2. Bill of Materials
-To replicate this setup, you need:
-* **Thermal Pad:** 12.8 W/mK silicone pad (cut to 20mm x 20mm).
-* **Kapton Tape:** To insulate surrounding surface-mount components on the DX-M1.
-* **90° USB Adapter:** To ensure the **Transcend 430S** external enclosure doesn't block the case's exhaust vents.
+### Step 3: The Final "Cap" (0.5mm Strip)
+Now that the board looks flat, lay one long **0.5mm strip** across the entire assembly (covering both your 1mm filler pieces and the main chip). 
+* This creates a perfectly flat "bridge" for your heatsink to sit on.
 
----
-
-### 3. Assembly Steps
-
-The "Thermal Sandwich" uses a tiered approach to ensure 100% surface contact while protecting the structural integrity of the M.2 board.
-
-#### Step A: Component Isolation
-Apply Kapton tape over the small surface-mount components surrounding the main DeepX silicon. This prevents thermal pad oils from seeping into the traces and provides a basic electrical safety barrier.
-
-#### Step B: The "Valley-Fill" Technique
-Do not use a single thick pad, as this can cause air pockets or uneven pressure.
-* **Layer 1 (Recesses):** Cut a 1mm thermal pad into small pieces and apply them specifically over the "deeper" areas of the NPU board, avoiding the high points of the chips.
-* **Layer 2 (The Cap):** Lay a single 0.5mm long strip of thermal pad across the entire assembly. This acts as a tension-spreader to create a flat contact surface for the heatsink.
-
-#### Step C: Heatsink & Tensioning
-Apply the heatsink over the completed pad stack. To prevent the DX-M1 PCB from bowing from the high point of the main chip:
-* **Rubber Band Tensioning:** Place two high-temperature rubber bands (or silicone O-rings) on both near-ends of the main chip. 
-* **Purpose:** This provides constant downward pressure for thermal transfer while ensuring the M.2 board stays perfectly flat, avoiding stress on the gold finger connectors.
-
-#### Step D: Airflow Clearance
-Ensure the 90° "Up" adapter for your Transcend 430S external enclosure is oriented so the drive sits vertically. This prevents the enclosure from acting as a "heat wall" for the Titan Case exhaust vents.
+### Step 4: The Heatsink & The "Air Gap"
+Place your heatsink on top of the pads. Use rubber bands or the case's natural tension to hold it firm.
+* **The Secret Ingredient:** Ensure there is a **small air gap** between the bottom of the heatsink and the plastic floor of the Titan Case.
+* **Why?** Heat needs to escape. If you press the heatsink against the plastic case, the heat gets trapped. The air gap lets the case fans blow that heat away.
 
 ---
 
-## 4. Expected Results
-With the "Thermal Sandwich" applied, the DX-M1 should stay within the 55°C - 62°C range during 24/7 detection. Without it, the NPU may shut down during peak summer ambient temperatures.
+## 4. Why This Works
+By following this "Sandwich" method, your **DeepX DX-M1** should stay between **55°C and 62°C** even when working 24/7. 
+
+* **The Pads** move the heat from the chip to the metal.
+* **The "Valley-Fill"** keeps the board from bending.
+* **The Air Gap** lets the heat disappear into the wind.
 
 ---
