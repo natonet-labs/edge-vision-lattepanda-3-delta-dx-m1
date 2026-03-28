@@ -30,7 +30,7 @@ The goal of **Panda Vision** is to transform a low-power SBC into a 25 TOPS AI p
 ### **Phase 2: Vision & Inference (In Progress)**
 * **Model Optimization:** Compiling YOLOv8/v9 models via the DXNN SDK for real-time detection.
 * **Face ID Trigger:** Developing the Python logic to identify "Nathan" and initiate the greeting sequence.
-* **Metrics:** Synchronizing hourly driveway stats to Cloudflare Workers.
+* **Metrics:** Synchronizing hourly stats to Cloudflare Workers.
 
 ### **Phase 3: Panda Vision (The Network Bridge)**
 * **Distributed Display:** Using a Raspberry Pi Pico 2 WH in the kitchen to receive signals from the LattePanda over the home network.
@@ -55,5 +55,4 @@ The goal of **Panda Vision** is to transform a low-power SBC into a 25 TOPS AI p
 
 * **[ADR-0001: Hardware Selection](docs/adr/0001-choosing-deepx-dxm1-over-hailo8.md):** Technical rationale for choosing the DeepX DX-M1 over the Hailo-8.
   * **[Setup & Hardware Validation Guide](docs/setup-guide.md):** The definitive guide to BIOS, PCIe topology, and driver installation.
-  * **Application Logic:** (Coming Soon) Detailed breakdown of the driveway counter Python scripts.
-  * **The "Thermal Sandwich":** (Coming Soon) Mechanical blueprints for cooling the DX-M1.
+  * **[The Thermal Sandwich Guide](docs/thermal-sandwich.md):** Mechanical blueprints for cooling the DX-M1.

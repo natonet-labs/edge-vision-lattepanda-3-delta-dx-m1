@@ -44,13 +44,12 @@
 
 ## 2. External Drive Setup
 
-To support the **DeepX DX-M1**, the internal SATA controller must be disabled. This project uses a **"Hybrid-External"** boot strategy to maintain high performance and offload thermal stress.
+To support the **DeepX DX-M1**, the internal SATA controller must be disabled. This project uses a "Hybrid-External" boot strategy to maintain high performance and offload thermal stress from the board.
 
 ### 2.1. Assembly
-* **AI Module:** Install the **DeepX DX-M1** into the **M.2 M-Key** slot.
-* **Storage Stack:** Connect the **Transcend 430s** (*or any M.2 2230/2242 drive*) via the **ElecGear** enclosure and **90° "Up" adapter** to the **10Gbps USB port**.
-> **Tip:** The 90° "Up" orientation prevents the enclosure from blocking adjacent USB ports and improves cooling.
-
+* **AI Module:** Install the DeepX DX-M1 into the M.2 M-Key slot.
+* **Primary Storage:** Transcend 430S 256GB installed in an ElecGear USB 3.2 Enclosure.
+* **Orientation:** Use a 90° "Up" USB adapter to prevent the enclosure from blocking adjacent ports and to keep it clear of the Titan Case's intake.
 
 ### 2.2. Required BIOS Settings
 Disabling SATA is **mandatory** to free up PCIe resources for the NPU:
@@ -408,9 +407,9 @@ delta@lp3d
 | Limitation | Detail |
 |------------|--------|
 | No SATA B-Key | Disabling SATA controller to enable DX-M1 makes the B-Key slot unusable for SATA SSDs |
+| Hybrid-External Boot | High-speed storage (Transcend 430S) is moved to a 10Gbps USB port to bypass the SATA limitation |
 | PCIe x2 only | LP3 Delta M-Key is wired x2, not x4. DX-M1 is designed for x4 but operates at x2 |
 | Gen2 required | Gen1 speed causes DMA header overflow during firmware init - must use Gen2 |
-| eMMC only for OS | 64GB eMMC is the only practical storage when DX-M1 occupies M-Key slot |
 | No wired Ethernet conflict | Ethernet moves to a separate Root Port when SATA is disabled - both work simultaneously |
 
 ---
