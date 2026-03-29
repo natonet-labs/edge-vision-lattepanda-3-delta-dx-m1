@@ -54,5 +54,5 @@ The goal of **Panda Vision** is to transform a low-power SBC into a 25 TOPS AI p
 ## Key Documentation
 
 * **[ADR-0001: Hardware Selection](docs/adr/0001-choosing-deepx-dxm1-over-hailo8.md):** Technical rationale for choosing the DeepX DX-M1 over the Hailo-8.
-  * **[Setup & Hardware Validation Guide](docs/setup-guide.md):** The definitive guide to BIOS, PCIe topology, and driver installation.
-  * **[The Thermal Sandwich Guide](docs/thermal-sandwich.md):** Mechanical blueprints for cooling the DX-M1.
+* **[Setup & Hardware Validation Guide](docs/setup-guide.md):** The definitive guide to BIOS, PCIe topology, and driver installation.
+* **[Thermal Sandwich Guide](docs/thermal-sandwich.md):** Mechanical blueprints for cooling the DX-M1.
