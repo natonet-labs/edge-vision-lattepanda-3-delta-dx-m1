@@ -44,4 +44,3 @@ Place your heatsink on top of the pads. Use rubber bands or case tension to hold
 3.  **Convection:** The air gap at the bottom allows the heatsink to stay cool by letting air pass over its surface.
 
 ---
-w
