@@ -12,38 +12,30 @@ Edge AI on small-form-factor PCs is often plagued by documentation gaps. This re
 
 ## The Vision
 
-The goal is to transform a low-power SBC into a 25 TOPS AI powerhouse capable of real-time vision tasks, specifically a **Custom Driveway Counter Dashboard**. This project bridges the gap between raw silicon and actionable data, utilizing:
+The goal of **Panda Vision** is to transform a low-power SBC into a 25 TOPS AI powerhouse. This project bridges the gap between raw silicon and a personalized "smart home" experience through three core pillars:
 
-  * **Object Detection:** Leveraging the DeepX DX-M1 for high-speed inference.
-  * **Edge Analytics:** Processing metrics locally on the N5105 CPU.
-  * **Visual Output:** Displaying hourly stats and battery health on a **Pimoroni Inky Frame 7.3"**.
-  * **Cloud Synchronization:** Hosting dashboards and metrics via **Cloudflare Workers**.
+* **Proactive Edge Intelligence:** Utilizing the DeepX DX-M1 for high-speed **Vehicle Identification** and **Facial Recognition** with total local privacy.
+* **Hardware-Level Automation:** Using the LattePanda’s hardware to trigger real-time physical responses, such as "Welcome Home" greetings.
+* **The Matrix Ecosystem:** Delivering high-visibility alerts on an Adafruit 16x32 RGB LED Matrix via a wireless network bridge.
 
 -----
 
 ## The Adventure Roadmap
 
 ### **Phase 1: The Hardware War (Complete)**
-
-The initial hurdle: making a 25 TOPS NPU visible to a board that only has 8 PCIe lanes.
-
-  * **The "SATA Sacrifice":** Disabling the SATA controller to reallocate Root Ports.
-  * **Signal Integrity:** Navigating BIOS settings (Gen2 locking) to stabilize the PCIe handshake.
-  * **Thermal Engineering:** Creating a "Level-Fill" thermal sandwich to keep the DX-M1 cool in a Titan Case.
+* **The "SATA Sacrifice":** Disabling the internal SATA controller in BIOS to reallocate PCIe lanes for the AI module.
+* **Vertical Storage Stack:** Implementing the Transcend 430s SSD with an ElecGear NV-2242A adapter and a MOGOOD 90° Up-Angle connector to maintain a slim profile.
+* **Thermal Management:** Stabilizing the DX-M1 in a LattePanda 3 Delta Titan Case for 24/7 operation.
 
 ### **Phase 2: Vision & Inference (In Progress)**
+* **Model Optimization:** Compiling YOLOv8/v9 models via the DXNN SDK for real-time detection.
+* **Face ID Trigger:** Developing the Python logic to identify "Nathan" and initiate the greeting sequence.
+* **Metrics:** Synchronizing hourly stats to Cloudflare Workers.
 
-Deploying the vision models and the **DXNN SDK**.
-
-  * Compiling ONNX models to DXNN format via **DX-COM**.
-  * Optimizing detection scripts for the driveway counter app.
-
-### **Phase 3: The Dashboard & Ecosystem**
-
-Closing the loop between the camera and the user.
-
-  * **Cloudflare Integration:** Sending hourly metrics to the cloud.
-  * **Inky Frame UI:** Designing a battery-optimized e-paper dashboard for real-time alerts.
+### **Phase 3: Panda Vision (The Network Bridge)**
+* **Distributed Display:** Using a Raspberry Pi Pico 2 WH in the kitchen to receive signals from the LattePanda over the home network.
+* **The Matrix Driver:** Powering the Adafruit 16x32 LED Matrix with a dedicated 5V 4A Switching Power Supply and using a 74AHCT125 Level Shifter to bridge logic levels.
+* **Messaging:** Implementing MQTT for near-zero latency communication between the "Brain" (LattePanda) and the "Eyes" (Pico/Matrix).
 
 -----
 
@@ -54,13 +46,13 @@ Closing the loop between the camera and the user.
 | **SBC** | LattePanda 3 Delta 864 (Intel N5105) |
 | **Accelerator** | DEEPX DX-M1 (25 TOPS INT8) |
 | **OS** | Ubuntu 24.04 LTS (on 64GB eMMC) |
-| **Frontend** | Pimoroni Inky Frame 7.3" (Deep Sleep Optimized) |
+| **Frontend** | Adafruit Industries Medium 16x32 RGB LED Matrix Panel |
 | **Backend** | Cloudflare Workers & Metrics Dashboard |
 
 -----
 
 ## Key Documentation
 
-  * **[Setup & Hardware Validation Guide](docs/SETUP_GUIDE.md):** The definitive guide to BIOS, PCIe topology, and driver installation.
-  * **Application Logic:** (Coming Soon) Detailed breakdown of the driveway counter Python scripts.
-  * **The "Thermal Sandwich":** (Coming Soon) Mechanical blueprints for cooling the DX-M1.
+* **[ADR-0001: Hardware Selection](docs/adr/0001-choosing-deepx-dxm1-over-hailo8.md):** Technical rationale for choosing the DeepX DX-M1 over the Hailo-8.
+* **[Setup & Hardware Validation Guide](docs/setup-guide.md):** The definitive guide to BIOS, PCIe topology, and driver installation.
+* **[Thermal Sandwich Guide](docs/thermal-sandwich.md):** Mechanical blueprints for cooling the DX-M1.
