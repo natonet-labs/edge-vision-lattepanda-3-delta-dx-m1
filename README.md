@@ -154,7 +154,6 @@ dxrt-cli --status
 - M-Key slot is x2 lanes (not x4)-board design limitation, not DX-M1 issue
 - B-Key slot is SATA-only (no NVMe support)
 - Gen1 PCIe speed causes enumeration failures-Gen2+ required
-- No onboard cooling beyond passive heatsink (thermal throttling unlikely under normal load)
 
 ---
 
