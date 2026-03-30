@@ -66,22 +66,25 @@ Both devices will be enumerated by the BIOS and OS simultaneously.
 
 ---
 
+Here's the corrected verbiage for Section 3:
+
+---
+
 ## 3. Understanding PCIe Root Port Configuration
 
 ### Root Cause of Initial Non-Detection
 
-The Intel N5105 (Jasper Lake) has only **8 PCIe lanes total**. These are split among multiple Root Ports:
+The Intel N5105 (Jasper Lake) has only **8 PCIe lanes total**. These are distributed among multiple Root Ports on the PCH (Platform Controller Hub). The actual hardware device address-to-function mapping is:
 
-- **Root Port 3:** Intel I225-V Ethernet Controller (1x lane)
-- **Root Port 5/6:** M-Key slot (x2 lanes, normally allocated dynamically)
-- **Root Port 7:** B-Key slot / SATA Controller (x1 lane)
-- **Root Port 17 (SATA):** SATA Controller (no PCIe lanes, SATA signal only)
+- **Device 1c.0 (PCIe Root Port):** M-Key slot (x2 lanes) — connects to DX-M1
+- **Device 1c.6 (PCIe Root Port):** Ethernet Controller I225-V (x1 lane)
+- **Device 17.0 (SATA Controller):** Drives SATA protocol signals to B-Key slot (no PCIe lanes, pure SATA)
 
-By default, the BIOS allocates Root Ports to devices at negotiation time. However, **PCIe speed negotiation can fail or behave unpredictably if the Root Port is set to "Auto" (automatic speed detection)**. This was the root cause of the DX-M1 not enumerating: the firmware handshake would time out during DMA buffer initialization on a Root Port stuck at Gen1 (2.5 GT/s).
+By default, the BIOS allocates these Root Ports dynamically during boot. However, **PCIe speed negotiation can fail or behave unpredictably if a Root Port is set to "Auto" (automatic speed detection)**. This was the root cause of the DX-M1 not enumerating: the firmware handshake would time out during DMA buffer initialization on a Root Port stuck at Gen1 (2.5 GT/s).
 
 ### The Solution (Not SATA Disabling)
 
-**Force Root Port 1 (Ethernet) and Root Ports 5/6 (M-Key) to PCIe Gen2 (5.0 GT/s).** This eliminates speed negotiation ambiguity and stabilizes the fabric:
+**Force Root Port 1c.0 (M-Key) and Root Port 1c.6 (Ethernet) to PCIe Gen2 (5.0 GT/s).** This eliminates speed negotiation ambiguity and stabilizes the fabric:
 
 - Gen2 (5.0 GT/s) is sufficient for both the Ethernet controller and the DX-M1 firmware initialization
 - The DX-M1 can still run full inference at Gen2 x2 (8 Gb/s bandwidth = 25 TOPS sustained)
@@ -489,7 +492,6 @@ delta@lp3d
 | M-Key is x2, not x4 | LP3 Delta M-Key is wired for x2 lanes, not x4. DX-M1 can run at x4 but negotiates down to x2 on this board. Bandwidth is still 8 Gb/s Gen2, sufficient for 25 TOPS inference. |
 | Gen2 required for stability | Gen1 speed (2.5 GT/s) causes DMA header overflow during DX-M1 firmware initialization. Must use Gen2 or higher. |
 | B-Key SATA only | B-Key slot is wired for SATA signals; NVMe M.2 drives will not work in the B-Key slot. |
-| Ethernet and M-Key share silk | Ethernet (Root Port 3) and M-Key (Root Ports 5/6) are on separate Root Ports and do not conflict, but both depend on stable PCIe speed negotiation. Setting both to Gen2 ensures reliable enumeration. |
 
 
 ---
